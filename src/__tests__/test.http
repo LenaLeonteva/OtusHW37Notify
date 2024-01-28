@@ -1,0 +1,15 @@
+###
+GET http://127.0.0.1:3004/ping
+
+###
+POST http://127.0.0.1:3004/message/send
+Content-Type: application/json
+
+{
+  "order_id": "a0bcded",
+  "user_id": 123,
+  "message": "Cat"
+}
+
+###
+GET http://127.0.0.1:3004/message/abcded

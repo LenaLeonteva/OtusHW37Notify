@@ -1,5 +1,8 @@
-import {api, operation, param, requestBody} from '@loopback/rest';
+import {inject} from '@loopback/core';
+import {repository} from '@loopback/repository';
+import {Response, RestBindings, api, operation, param, requestBody} from '@loopback/rest';
 import {Message} from '../models/message.model';
+import {MessageRepository} from '../repositories';
 
 /**
  * The controller class is generated from OpenAPI spec with operations tagged
@@ -29,20 +32,35 @@ import {Message} from '../models/message.model';
   paths: {},
 })
 export class OpenApiController {
-    constructor() {} 
+  constructor(
+    @repository(MessageRepository) private repo: MessageRepository,
+    @inject(RestBindings.Http.RESPONSE) private response: Response,
+  ) { }
   /**
    *
    *
    * @param _requestBody Create message
    */
   @operation('post', '/message/send', {
-  operationId: 'sendMessage',
-  responses: {
-    '200': {
-      description: 'OK',
+    operationId: 'sendMessage',
+    responses: {
+      '200': {
+        description: 'OK',
+      },
     },
-  },
-  requestBody: {
+    requestBody: {
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/components/schemas/Message',
+          },
+        },
+      },
+      description: 'Create message',
+      required: true,
+    },
+  })
+  async sendMessage(@requestBody({
     content: {
       'application/json': {
         schema: {
@@ -52,20 +70,10 @@ export class OpenApiController {
     },
     description: 'Create message',
     required: true,
-  },
-})
-  async sendMessage(@requestBody({
-  content: {
-    'application/json': {
-      schema: {
-        $ref: '#/components/schemas/Message',
-      },
-    },
-  },
-  description: 'Create message',
-  required: true,
-}) _requestBody: Message): Promise<unknown> {
-     throw new Error('Not implemented'); 
+  }) _requestBody: Message): Promise<unknown> {
+    let result = await this.repo.create(_requestBody);
+    console.log(result)
+    return result;
   }
   /**
    *
@@ -74,41 +82,42 @@ export class OpenApiController {
    * @returns OK
    */
   @operation('get', '/message/{orderId}', {
-  operationId: 'getMessage',
-  responses: {
-    '200': {
-      description: 'OK',
-      content: {
-        'application/json': {
-          schema: {
-            $ref: '#/components/schemas/Message',
+    operationId: 'getMessage',
+    responses: {
+      '200': {
+        description: 'OK',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/Message',
+            },
           },
         },
       },
     },
-  },
-  parameters: [
-    {
-      name: 'orderId',
-      in: 'path',
-      description: 'ID of order',
-      required: true,
-      schema: {
-        type: 'string',
+    parameters: [
+      {
+        name: 'orderId',
+        in: 'path',
+        description: 'ID of order',
+        required: true,
+        schema: {
+          type: 'string',
+        },
       },
-    },
-  ],
-})
+    ],
+  })
   async getMessage(@param({
-  name: 'orderId',
-  in: 'path',
-  description: 'ID of order',
-  required: true,
-  schema: {
-    type: 'string',
-  },
-}) orderId: string): Promise<Message> {
-     throw new Error('Not implemented'); 
+    name: 'orderId',
+    in: 'path',
+    description: 'ID of order',
+    required: true,
+    schema: {
+      type: 'string',
+    },
+  }) orderId: string): Promise<Message> {
+    const message = await this.repo.findById(orderId);
+    return message
   }
 }
 

@@ -1,4 +1,4 @@
-import {model, property} from '@loopback/repository';
+import {Entity, model, property} from '@loopback/repository';
 
 /**
  * The model class is generated from OpenAPI schema - Message
@@ -16,28 +16,30 @@ export class Message extends Entity {
   /**
    *
    */
-  @property( {
-  type: 'string',
-})
-  order_id?: string;
+  @property({
+    type: 'string',
+    id: true,
+    generated: false,
+  })
+  order_id: string;
 
   /**
    *
    */
-  @property( {
-  type: 'number',
-  format: 'int32',
-  minimum: 0,
-  maximum: 2147483647,
-})
+  @property({
+    type: 'number',
+    format: 'int32',
+    minimum: 0,
+    maximum: 2147483647,
+  })
   user_id?: number;
 
   /**
    *
    */
-  @property( {
-  type: 'string',
-})
+  @property({
+    type: 'string',
+  })
   message?: string;
 
 }
