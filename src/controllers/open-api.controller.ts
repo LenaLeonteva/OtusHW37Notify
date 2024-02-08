@@ -15,7 +15,13 @@ import {MessageRepository} from '../repositories';
       Message: {
         type: 'object',
         properties: {
+          id: {
+            type: 'number',
+          },
           order_id: {
+            type: 'string',
+          },
+          date: {
             type: 'string',
           },
           user_id: {
@@ -115,8 +121,13 @@ export class OpenApiController {
     schema: {
       type: 'string',
     },
-  }) orderId: string): Promise<Message> {
-    const message = await this.repo.findById(orderId);
+  }) orderId: string): Promise<Message[]> {
+    const filter = {
+      where: {
+        order_id: orderId
+      }
+    };
+    const message = await this.repo.find(filter);
     return message
   }
 }

@@ -13,15 +13,34 @@ export class Message extends Entity {
     }
   }
 
+
+  @property({
+    type: 'number',
+    format: 'int32',
+    id: true,
+    generated: true,
+    minimum: 0,
+    maximum: 2147483647,
+  })
+  id?: number;
+
   /**
    *
    */
   @property({
     type: 'string',
-    id: true,
-    generated: false,
+    //id: true,
+    //generated: false,
   })
   order_id: string;
+
+  /**
+   *
+   */
+  @property({
+    type: 'string',
+  })
+  date?: string;
 
   /**
    *
@@ -41,6 +60,8 @@ export class Message extends Entity {
     type: 'string',
   })
   message?: string;
+
+
 
 }
 
